@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const url = 'http://localhost:4000/posts';
+const url = 'https://smile-spot.onrender.com/posts';
 
 // fetch post form backend
 export const fetchPosts = () => axios.get(url);
