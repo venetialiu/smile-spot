@@ -6,12 +6,14 @@ const postSchema = mongoose.Schema({
     // what is goint to be inside each post?
     title: String,
     message: String,
+    name: String,
     creator: String,
     tags: [String],
     selectedFile: String,
-    likeCount: {
-        type: Number,
-        default: 0
+    // the useres who's liked the post
+    likes: {
+        type: [String],
+        default: []
     },
     createdAt: {
         type: Date,

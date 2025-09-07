@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import PostMessage from '../models/postMessage.js';
+import e from 'express';
 
 // getPosts
 export const getPosts = async (req, res) => {
@@ -17,8 +18,13 @@ export const createPost = async (req, res) => {
     // store req in a const
     const post = req.body;
 
-    // create new post
-    const newPost = new PostMessage(post);
+    // check if user is authenticated
+    if(!req.userId){
+        return res.status(401).json({message: "User Unauthenticated."})
+    }
+
+    // create new post & update creator to specific user & updated created time
+    const newPost = new PostMessage({ ...post, creator: req.userId, createdAt: new Date().toISOString() });
 
     try {
         // save post
@@ -51,6 +57,8 @@ export const updatePost = async (req, res) => {
 export const deletePost = async (req, res) => {
     const { id:_id } = req.params;
 
+    // check if user is authenticated
+
     if(! mongoose.Types.ObjectId.isValid(_id)) {
         return res.status(400).send('No post with that id.');
     }
@@ -66,9 +74,15 @@ export const deletePost = async (req, res) => {
 
 }
 
-// add 1 like to post
+// like or unlike post
 export const likePost = async (req, res) => {
+    // post id
     const { id } = req.params;
+
+    // check if user is authenticated
+    if(!req.userId) {
+        return res.status(401).json({message: "User Unauthenticated."})
+    }
 
     if(! mongoose.Types.ObjectId.isValid(id)) {
         return res.status(400).send('No post with that id.');
@@ -76,7 +90,19 @@ export const likePost = async (req, res) => {
 
     try {
         const post = await PostMessage.findById(id);
-        const updatedPost = await PostMessage.findByIdAndUpdate(id, { likeCount : post.likeCount + 1}, {new: true} );
+
+        // check if user id in likes (user has already liked the post)
+        const index = post.likes.findIndex((id) => id === String(req.userId));
+
+        // if user has not liked the post -> like
+        if(index === -1){
+            post.likes.push(req.userId);
+        }else{
+             // if use has liked the post -> unlike
+             post.likes = post.likes.filter((id) => id !== String(req.userId));
+        }
+    
+        const updatedPost = await PostMessage.findByIdAndUpdate(id, post, {new: true} );
         res.json(updatedPost);
         
     } catch (error) {
