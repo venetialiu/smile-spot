@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container } from '@mui/material';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles'; // Import necessary functions
 
 import Navbar from './components/Navbar/Navbar';

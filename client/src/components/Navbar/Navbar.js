@@ -23,11 +23,11 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const logout = () => {
+  const logout = useCallback(() => {
     dispatch({ type: 'LOGOUT' });
     navigate('/');
     setUser(null);
-  };
+  }, [dispatch, navigate]);
 
   useEffect(() => {
     const token = user?.token;
