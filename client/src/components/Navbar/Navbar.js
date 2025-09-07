@@ -6,14 +6,13 @@ import { jwtDecode } from 'jwt-decode';
 import {
   StyledAppBar,
   Heading,
-  Image,
   Toolbar,
   Profile,
   UserName,
   BrandContainer,
   StyledAvatar
 } from './styles';
-import memories from '../../images/memories.png';
+// import memories from '../../images/memories.png';
 import { Button } from '@mui/material';
 
 const Navbar = () => {
@@ -45,7 +44,7 @@ const Navbar = () => {
     };
 
     setUser(JSON.parse(localStorage.getItem('profile')));
-  }, [location]);
+  }, [location, user?.token, logout]);
 
   return (
     <StyledAppBar position="static" color="inherit">

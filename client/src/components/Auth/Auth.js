@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Avatar, Button, Typography, Container } from '@mui/material';
+import { Button, Typography, Container } from '@mui/material';
 import { GoogleLogin } from '@react-oauth/google';
 import { useDispatch } from 'react-redux';
 import { jwtDecode } from "jwt-decode";
