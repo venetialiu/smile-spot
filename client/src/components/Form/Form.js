@@ -8,7 +8,6 @@ import { createPost, updatePost } from '../../actions/posts';
 
 const Form = ({currentId, setCurrentId}) => {
   const [postData, setPostData] = useState({
-    creator: '',
     title: '',
     message: '',
     tags: '',
@@ -18,6 +17,9 @@ const Form = ({currentId, setCurrentId}) => {
   // fetch updated post from redux 
   const post = useSelector((state) => currentId ? state.posts.find((p) => p._id === currentId) : null);
   const dispatch = useDispatch();
+  
+  // get user state
+  const user = useSelector((state) => state.auth.authData);
 
   useEffect(() => {
     if(post) setPostData(post)
@@ -26,9 +28,9 @@ const Form = ({currentId, setCurrentId}) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if(currentId) {
-      dispatch(updatePost(currentId, postData));
+      dispatch(updatePost(currentId, { ...postData, name: user?.result?.name }));
     } else {
-      dispatch(createPost(postData));
+      dispatch(createPost({ ...postData, name: user?.result?.name }));
     }
     clear();
   };
@@ -36,7 +38,6 @@ const Form = ({currentId, setCurrentId}) => {
   const clear = () => {
     setCurrentId(null);
     setPostData({
-      creator: '',
       title: '',
       message: '',
       tags: '',
@@ -44,22 +45,23 @@ const Form = ({currentId, setCurrentId}) => {
     });
   };
 
+  // if user not logged in -> show a card saying that user cannot create post
+  if (!user?.result?.name){
+    return (
+       <Paper sx={{ p: 2 }}>
+        <Typography variant="h6" align="center" sx={{ mb: 2 }}>
+          Sign in to start smilespotting :)
+        </Typography>
+       </Paper>
+    )
+  };
+
   return (
     <Paper sx={{ p: 2 }}>
       <Box component="form" autoComplete="off" noValidate onSubmit={handleSubmit}>
         <Typography variant="h6" sx={{ mb: 2 }}>
-          {currentId ? 'Editing' : 'Creating'} a Memory
+          {currentId ? 'Editing' : 'Creating'} a smilespotting
         </Typography>
-
-        <TextField
-          name="creator"
-          label="Creator"
-          variant="outlined"
-          fullWidth
-          value={postData.creator}
-          onChange={(e) => setPostData({ ...postData, creator: e.target.value })}
-          sx={{ mb: 2 }}
-        />
         <TextField
           name="title"
           label="Title"
